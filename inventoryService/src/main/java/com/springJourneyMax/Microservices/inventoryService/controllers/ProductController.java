@@ -1,5 +1,6 @@
 package com.springJourneyMax.Microservices.inventoryService.controllers;
 
+import com.springJourneyMax.Microservices.inventoryService.clients.OrderFeignClient;
 import com.springJourneyMax.Microservices.inventoryService.dto.ProductDto;
 import com.springJourneyMax.Microservices.inventoryService.services.ProductServices;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,17 +25,14 @@ public class ProductController {
 
     private final ProductServices productServices;
     private final DiscoveryClient discoveryClient;
-    private final RestClient restClient;
+//    private final RestClient restClient;
+    private final OrderFeignClient orderFeignClient;
 
     @GetMapping("/FetchingOrders")
     public String fetchOrdersFromOrderService(HttpServletRequest httpServletRequest){
         log.info(httpServletRequest.getHeader("X-Request-Id"));
-        ServiceInstance orderService=discoveryClient
-                .getInstances("orderService").getFirst();
-        return restClient.get()
-                .uri(orderService.getUri()+"/orders/core/HelloOrder")
-                .retrieve()
-                .body(String.class);
+
+        return orderFeignClient.helloWorld();
     }
 
     @GetMapping("/all")
