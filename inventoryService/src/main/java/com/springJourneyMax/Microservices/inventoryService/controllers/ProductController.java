@@ -2,6 +2,7 @@ package com.springJourneyMax.Microservices.inventoryService.controllers;
 
 import com.springJourneyMax.Microservices.inventoryService.dto.ProductDto;
 import com.springJourneyMax.Microservices.inventoryService.services.ProductServices;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.client.ServiceInstance;
@@ -26,7 +27,8 @@ public class ProductController {
     private final RestClient restClient;
 
     @GetMapping("/FetchingOrders")
-    public String fetchOrdersFromOrderService(){
+    public String fetchOrdersFromOrderService(HttpServletRequest httpServletRequest){
+        log.info(httpServletRequest.getHeader("X-Request-Id"));
         ServiceInstance orderService=discoveryClient
                 .getInstances("orderService").getFirst();
         return restClient.get()

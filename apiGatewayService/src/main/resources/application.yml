@@ -8,12 +8,18 @@ spring:
         - id: orderService
           uri: lb://ORDERSERVICE
           predicates:
-            - Path=/orders/**
+            - Path=/api/v1/orders/**
+          filters:
+            - AddRequestHeader=X-Request-Id, Rohan
+            - StripPrefix=2
+            - RedirectTo=302, https://github.com/ARONAGENT
         - id: inventoryService
           uri: lb://INVENTORYSERVICE
           predicates:
-            - Path=/inventory/**
-
+            - Path=/api/v1/inventory/**
+          filters:
+            - AddRequestHeader=X-Request-Id, Rohan
+            - StripPrefix=2
 eureka:
   client:
     service-url:
