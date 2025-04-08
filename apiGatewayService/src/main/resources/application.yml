@@ -12,7 +12,6 @@ spring:
           filters:
             - AddRequestHeader=X-Request-Id, Rohan
             - StripPrefix=2
-            - RedirectTo=302, https://github.com/ARONAGENT
         - id: inventoryService
           uri: lb://INVENTORYSERVICE
           predicates:

@@ -1,6 +1,7 @@
 package com.springJourneyMax.Microservices.inventoryService.controllers;
 
 import com.springJourneyMax.Microservices.inventoryService.clients.OrderFeignClient;
+import com.springJourneyMax.Microservices.inventoryService.dto.OrderRequestDTO;
 import com.springJourneyMax.Microservices.inventoryService.dto.ProductDto;
 import com.springJourneyMax.Microservices.inventoryService.services.ProductServices;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,10 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestClient;
 
 import java.util.List;
@@ -45,5 +43,11 @@ public class ProductController {
     public ResponseEntity<ProductDto> getProdById(@PathVariable Long id){
         ProductDto productDto=productServices.getProdById(id);
         return  ResponseEntity.ok(productDto);
+    }
+
+    @PutMapping("/updateStock")
+    public ResponseEntity<Double> reduceStocks(@RequestBody OrderRequestDTO orderRequestDTO){
+        Double StockPrice=productServices.reduceStocks(orderRequestDTO);
+        return ResponseEntity.ok(StockPrice);
     }
 }
