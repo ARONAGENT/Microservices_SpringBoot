@@ -6,6 +6,7 @@ import com.springJourneyMax.Microservices.orderService.entity.OrderItem;
 import com.springJourneyMax.Microservices.orderService.entity.Orders;
 import com.springJourneyMax.Microservices.orderService.entity.enums.OrderStatus;
 import com.springJourneyMax.Microservices.orderService.repositories.OrdersRepository;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.github.resilience4j.retry.annotation.Retry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +36,7 @@ public class OrderService {
         return modelMapper.map(orders,OrderRequestDTO.class);
     }
     @Retry(name = "inventoryRetry" ,fallbackMethod="createOrderFallback")
+    @RateLimiter(name = "inventoryRateLimiter",fallbackMethod ="createOrderFallback")
     public OrderRequestDTO createOrder(OrderRequestDTO orderRequestDTO) {
         log.info("Starting createOrder for request: {}", orderRequestDTO);
         Double totalPrice=inventoryFeignClient.reduceStock(orderRequestDTO);
