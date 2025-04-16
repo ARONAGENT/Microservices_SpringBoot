@@ -37,4 +37,10 @@ public class OrderController {
         OrderRequestDTO orderRequestDTO=orderService.getOrdersById(id);
         return ResponseEntity.ok(orderRequestDTO);
     }
+
+    @DeleteMapping("/order-cancelled/{id}")
+    public ResponseEntity<OrderRequestDTO> deleteOrder(@PathVariable Long id){
+        OrderRequestDTO orderRequestDTO1=orderService.cancelOrder(id);
+        return ResponseEntity.ok(orderRequestDTO1);
+    }
 }

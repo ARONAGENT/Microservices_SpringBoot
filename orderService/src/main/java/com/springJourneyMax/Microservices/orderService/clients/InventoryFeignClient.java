@@ -9,4 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface InventoryFeignClient {
     @PutMapping("/products/updateStock")
     Double reduceStock(@RequestBody OrderRequestDTO orderRequestDTO);
+
+    @PutMapping("products/increaseStock")
+    String increaseStocks(@RequestBody OrderRequestDTO orderRequestDTO);
 }

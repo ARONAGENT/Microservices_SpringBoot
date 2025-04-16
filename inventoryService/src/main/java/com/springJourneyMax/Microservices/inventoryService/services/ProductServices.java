@@ -54,4 +54,20 @@ public class ProductServices {
         }
         return totalprice;
     }
+
+    public void increaseStocks(OrderRequestDTO orderRequestDTO) {
+        for(OrderRequestItemDTO orderRequestItemDTO:orderRequestDTO.getOrderItems()){
+            Long prodId=orderRequestItemDTO.getProdId();
+            Integer quantity=orderRequestItemDTO.getQuantity();
+
+            Product product=productRepository.findById(prodId).orElseThrow(
+                    ()-> new RuntimeException("Id not Found "+prodId)
+            );
+            if(product.getStock()<quantity){
+                throw new RuntimeException("product cannot full filled your request");
+            }
+            product.setStock(product.getStock()+quantity);
+            productRepository.save(product);
+        }
+    }
 }
