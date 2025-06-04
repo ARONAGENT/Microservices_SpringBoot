@@ -41,7 +41,8 @@ public class OrderService {
     }
 //    @Retry(name = "inventoryRetry" ,fallbackMethod="createOrderFallback")
 //    @RateLimiter(name = "inventoryRateLimiter",fallbackMethod ="createOrderFallback")
-    @CircuitBreaker(name = "inventoryCircuitBreaker",fallbackMethod = "createOrderFallback")
+@Transactional
+@CircuitBreaker(name = "inventoryCircuitBreaker",fallbackMethod = "createOrderFallback")
     public OrderRequestDTO createOrder(OrderRequestDTO orderRequestDTO) {
         log.info("Starting createOrder for request: {}", orderRequestDTO);
         Double totalPrice=inventoryFeignClient.reduceStock(orderRequestDTO);

@@ -16,13 +16,24 @@
 resilience4j:
   circuitbreaker:
     instances:
-      inventoryFeignClient:  # This name should match the @CircuitBreaker 'name' used in your code
+      inventoryCircuitBreaker:  # This name should match the @CircuitBreaker 'name' used in your code
         register-health-indicator: true  # Registers the circuit breaker health indicator for actuator
-        sliding-window-size: 10          # Number of calls to consider when calculating failure rate
+        sliding-window-size: 6         # Number of calls to consider when calculating failure rate
         failure-rate-threshold: 50       # % of failures (out of 10 calls) to trip the circuit breaker
-        wait-duration-in-open-state: 10000  # Time in milliseconds to wait before transitioning to half-open (10 sec)
+        wait-duration-in-open-state: 5000  # Time in milliseconds to wait before transitioning to half-open (10 sec)
         permitted-number-of-calls-in-half-open-state: 5  # Number of trial calls when in half-open state
         sliding-window-type: COUNT_BASED  # Use COUNT_BASED or TIME_BASED window
         minimum-number-of-calls: 5        # Minimum number of calls before calculating failure rate
         automatic-transition-from-open-to-half-open-enabled: true  # Automatically attempt to close circuit after wait
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health, metrics, circuitbreakers"
+
+
+
+  endpoint:
+    health:
+      show-details: always
