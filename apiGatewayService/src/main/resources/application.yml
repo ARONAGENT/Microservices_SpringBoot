@@ -12,6 +12,7 @@ spring:
           filters:
             - AddRequestHeader=X-Request-Id, Rohan
             - StripPrefix=2
+            - name: LoggingOrdersFilter
         - id: inventoryService
           uri: lb://INVENTORYSERVICE
           predicates:
