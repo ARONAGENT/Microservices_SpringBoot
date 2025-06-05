@@ -1,3 +1,8 @@
+jwt:
+  secretKey: J/2eCtv4pW7qlF6HQIuKvxU8EuhymVJZzefLq0PAXaY=
+
+server:
+  port: 8081
 spring:
   application:
     name: apiGatewayService
@@ -13,6 +18,7 @@ spring:
             - AddRequestHeader=X-Request-Id, Rohan
             - StripPrefix=2
             - name: LoggingOrdersFilter
+            - name: Authentication
         - id: inventoryService
           uri: lb://INVENTORYSERVICE
           predicates:
@@ -20,6 +26,7 @@ spring:
           filters:
             - AddRequestHeader=X-Request-Id, Rohan
             - StripPrefix=2
+            - name: Authentication
 eureka:
   client:
     service-url:
