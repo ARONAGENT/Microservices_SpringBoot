@@ -17,8 +17,8 @@ public class OrderController {
 
     private final OrderService orderService;
     @GetMapping("/HelloOrder")
-    public String helloOrder(){
-        return "Hello Order Service ....";
+    public String helloOrder(@RequestHeader("X_User-Id") Long userid){
+        return "Hello Order Service ....Your userid "+userid;
     }
     @GetMapping("/all")
     public ResponseEntity<List<OrderRequestDTO>> allOrders(){
