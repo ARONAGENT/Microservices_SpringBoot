@@ -8,6 +8,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="apiGatewayService" />
+        <module name="config-server" />
         <module name="inventoryService" />
         <module name="Eureka_Service" />
         <module name="orderService" />
@@ -18,6 +19,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="Eureka_Service" options="-parameters" />
       <module name="apiGatewayService" options="-parameters" />
+      <module name="config-server" options="-parameters" />
       <module name="inventoryService" options="-parameters" />
       <module name="orderService" options="-parameters" />
     </option>
