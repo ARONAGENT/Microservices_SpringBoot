@@ -1,5 +1,6 @@
 package com.springJourneyMax.Microservices.orderService.controllers;
 
+import com.springJourneyMax.Microservices.orderService.config.User_tracingConfig;
 import com.springJourneyMax.Microservices.orderService.dtos.OrderRequestDTO;
 import com.springJourneyMax.Microservices.orderService.services.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,8 @@ import java.util.List;
 public class OrderController {
 
     private final OrderService orderService;
+    private final User_tracingConfig userTracingConfig;
+
     @GetMapping("/HelloOrder")
     public String helloOrder(@RequestHeader("X_User-Id") Long userid){
         return "Hello Order Service ....Your userid "+userid;
@@ -27,9 +30,18 @@ public class OrderController {
     @Value("${rohan.properties}")
     private String myEnvironmentVariable;
 
-    @GetMapping("/helloEnvProfiles")
+    @GetMapping("/helloUserTracings")
     public String helloSpringProfile(){
-        return "Hello Order Service your environment is : "+myEnvironmentVariable;
+        if(userTracingConfig.isUserTracingEnabled()){
+            return "User tracing enabled ";
+        }else {
+            return "User tracing disabled";
+        }
+    }
+
+    @GetMapping("/helloEnvProfiles")
+    public String hello_userTracing(){
+        return "Hello Order Service userTracing is enabled : "+myEnvironmentVariable;
     }
 
     @GetMapping("/all")
