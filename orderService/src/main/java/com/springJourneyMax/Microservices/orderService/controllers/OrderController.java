@@ -4,6 +4,8 @@ import com.springJourneyMax.Microservices.orderService.dtos.OrderRequestDTO;
 import com.springJourneyMax.Microservices.orderService.services.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,6 +15,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/core")
+@RefreshScope
 public class OrderController {
 
     private final OrderService orderService;
@@ -20,6 +23,15 @@ public class OrderController {
     public String helloOrder(@RequestHeader("X_User-Id") Long userid){
         return "Hello Order Service ....Your userid "+userid;
     }
+
+    @Value("${rohan.properties}")
+    private String myEnvironmentVariable;
+
+    @GetMapping("/helloEnvProfiles")
+    public String helloSpringProfile(){
+        return "Hello Order Service your environment is : "+myEnvironmentVariable;
+    }
+
     @GetMapping("/all")
     public ResponseEntity<List<OrderRequestDTO>> allOrders(){
         List<OrderRequestDTO> orderRequestDTOS=orderService.getAllOrders();
