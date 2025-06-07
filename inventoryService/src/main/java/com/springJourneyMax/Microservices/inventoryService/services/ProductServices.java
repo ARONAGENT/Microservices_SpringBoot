@@ -37,37 +37,38 @@ public class ProductServices {
     }
 
     public Double reduceStocks(OrderRequestDTO orderRequestDTO) {
-        Double totalprice=0.0;
-        for(OrderRequestItemDTO orderRequestItemDTO:orderRequestDTO.getOrderItems()){
-                Long prodId=orderRequestItemDTO.getProdId();
-                Integer quantity=orderRequestItemDTO.getQuantity();
-
-                Product product=productRepository.findById(prodId).orElseThrow(
-                        ()-> new RuntimeException("Id not Found "+prodId)
-                );
-                if(product.getStock()<quantity){
-                    throw new RuntimeException("product cannot full filled your request");
-                }
-                product.setStock(product.getStock()-quantity);
-                productRepository.save(product);
-                totalprice+=product.getPrice()*quantity;
+        log.info("Starting reduceStocks for Id : {}", orderRequestDTO.getId());
+        Double totalPrice = 0.0;
+        for (OrderRequestItemDTO orderRequestItemDTO : orderRequestDTO.getOrderItems()) {
+            Long prodId = orderRequestItemDTO.getProdId();
+            Integer quantity = orderRequestItemDTO.getQuantity();
+            log.info("Processing product ID: {}, Quantity: {}", prodId, quantity);
+            Product product = productRepository.findById(prodId).orElseThrow(() -> new RuntimeException("ID not found: " + prodId));
+            if (product.getStock() < quantity) {
+                log.warn("Insufficient stock for product ID: {}. Requested: {}, Available: {}",
+                        prodId, quantity, product.getStock());
+                throw new RuntimeException("Product cannot fulfill your request");
+            }
+            product.setStock(product.getStock() - quantity);
+            productRepository.save(product);
+            log.info("Updated stock for product ID: {}. Remaining stock: {}", prodId, product.getStock());
+            totalPrice += product.getPrice() * quantity;
+            log.info("Updated total price: {}", totalPrice);
         }
-        return totalprice;
+        log.info("Completed reduceStocks. Total price: {}", totalPrice);
+        return totalPrice;
     }
 
     public void increaseStocks(OrderRequestDTO orderRequestDTO) {
-        for(OrderRequestItemDTO orderRequestItemDTO:orderRequestDTO.getOrderItems()){
-            Long prodId=orderRequestItemDTO.getProdId();
-            Integer quantity=orderRequestItemDTO.getQuantity();
-
-            Product product=productRepository.findById(prodId).orElseThrow(
-                    ()-> new RuntimeException("Id not Found "+prodId)
-            );
-            if(product.getStock()<quantity){
-                throw new RuntimeException("product cannot full filled your request");
-            }
-            product.setStock(product.getStock()+quantity);
+        log.info("Starting increaseStocks for Id: {}", orderRequestDTO.getId());
+        for (OrderRequestItemDTO orderRequestItemDTO : orderRequestDTO.getOrderItems()) {
+            Long prodId = orderRequestItemDTO.getProdId();
+            Integer quantity = orderRequestItemDTO.getQuantity();
+            Product product = productRepository.findById(prodId).orElseThrow(() -> new RuntimeException("ID not found: " + prodId));
+            product.setStock(product.getStock() + quantity);
             productRepository.save(product);
+            log.info("Updated stock for product ID: {}. New stock: {}", prodId, product.getStock());
         }
+        log.info("Completed increaseStocks operation.");
     }
 }

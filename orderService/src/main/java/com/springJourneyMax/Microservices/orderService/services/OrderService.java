@@ -43,36 +43,40 @@ public class OrderService {
 //    @RateLimiter(name = "inventoryRateLimiter",fallbackMethod ="createOrderFallback")
 @Transactional
 @CircuitBreaker(name = "inventoryCircuitBreaker",fallbackMethod = "createOrderFallback")
-    public OrderRequestDTO createOrder(OrderRequestDTO orderRequestDTO) {
-        log.info("Starting createOrder for request: {}", orderRequestDTO);
-        Double totalPrice=inventoryFeignClient.reduceStock(orderRequestDTO);
-        Orders orders = modelMapper.map(orderRequestDTO, Orders.class);
-            for (OrderItem item : orders.getOrderItems()) {
-                item.setOrders(orders);
-            }
-            orders.setTotalPrice(totalPrice);
-            orders.setOrderStatus(OrderStatus.CONFIRMED);
-        ordersRepository.save(orders);
-        return modelMapper.map(orders, OrderRequestDTO.class);
+public OrderRequestDTO createOrder(OrderRequestDTO orderRequestDTO) {
+    log.info("➡️ Starting createOrder for ID: {}", orderRequestDTO.getId());
+    Double totalPrice = inventoryFeignClient.reduceStock(orderRequestDTO);
+    Orders orders = modelMapper.map(orderRequestDTO, Orders.class);
+    for (OrderItem item : orders.getOrderItems()) {
+        item.setOrders(orders);
     }
-    public OrderRequestDTO createOrderFallback(OrderRequestDTO orderRequestDTO,Throwable throwable){
-        log.error("Fallback occurred due to {}",throwable.getMessage());
+    orders.setTotalPrice(totalPrice);
+    orders.setOrderStatus(OrderStatus.CONFIRMED);
+    ordersRepository.save(orders);
+    log.info("✅ Finished createOrder for ID: {}, Total Price: {}", orders.getId(), orders.getTotalPrice());
+    return modelMapper.map(orders, OrderRequestDTO.class);
+}
+
+
+    public OrderRequestDTO createOrderFallback(OrderRequestDTO orderRequestDTO, Throwable throwable) {
+        log.error("Fallback occurred due to: {}", throwable.getMessage());
         return new OrderRequestDTO();
     }
 
     @Transactional
     public OrderRequestDTO cancelOrder(Long id) {
-        log.info("Order id is {}",id);
-        Orders orders=ordersRepository.findById(id).orElseThrow(() -> new RuntimeException("Order Not found  by id"+id));
+        log.info("➡️ Starting cancelOrder for ID: {}", id);
+        Orders orders = ordersRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Order not found by ID: " + id));
         ordersRepository.delete(orders);
-        CancelOrders cancelOrders=CancelOrders.builder()
+        CancelOrders cancelOrders = CancelOrders.builder()
                 .orderStatus(OrderStatus.CANCELLED)
                 .localDateTime(LocalDateTime.now())
                 .build();
         cancelOrderRepository.save(cancelOrders);
-        OrderRequestDTO orderRequestDTO=modelMapper.map(orders,OrderRequestDTO.class);
+        OrderRequestDTO orderRequestDTO = modelMapper.map(orders, OrderRequestDTO.class);
         inventoryFeignClient.increaseStocks(orderRequestDTO);
-        modelMapper.map(orderRequestDTO,orders);
+        log.info("✅ Finished cancelOrder for ID: {}", id);
         return modelMapper.map(orders, OrderRequestDTO.class);
     }
 }
