@@ -83,14 +83,14 @@ This microservices platform follows the **distributed architecture pattern** wit
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/ARONAGENT/ecommerce-microservices.git
+   git clone https://github.com/ARONAGENT/Microservices_SpringBoot_E-Commerce.git
    cd ecommerce-microservices
    ```
 
 2. **Start Infrastructure Services**
    ```bash
    # Start Eureka Server
-   cd eureka-server
+   cd Eureka_Sevice
    mvn spring-boot:run
    
    # Start Config Server
@@ -98,28 +98,31 @@ This microservices platform follows the **distributed architecture pattern** wit
    mvn spring-boot:run
    
    # Start API Gateway
-   cd ../api-gateway
+   cd ../apiGatewayService
    mvn spring-boot:run
    ```
 
 3. **Start Business Services**
    ```bash
    # Start Inventory Service
-   cd inventory-service
+   cd inventoryService
    mvn spring-boot:run
    
    # Start Order Service
-   cd ../order-service
+   cd ../orderService
    mvn spring-boot:run
    ```
 
 4. **Start Monitoring (Optional)**
    ```bash
    # Start Zipkin
-   docker run -d -p 9411:9411 openzipkin/zipkin
-   
+      java -jar zipkin-server-3.5.1-exec.jar
+
    # Start ELK Stack
-   docker-compose up -d
+   for Elastic -> run elastic.bat
+   for Kibana -> run kibana.bat
+   for Logstash -> run logstash -f logstash.conf
+   
    ```
 
 ### Service URLs
@@ -178,15 +181,10 @@ The application supports multiple environments:
 - **Production** (`prod`): Production-ready configuration
 
 ### Configuration Files Structure
-```
-config-repo/
-├── application.yml              # Common configuration
-├── application-dev.yml          # Development specific
-├── application-test.yml         # Testing specific
-├── application-prod.yml         # Production specific
-├── order-service.yml           # Order service specific
-└── inventory-service.yml       # Inventory service specific
-```
+
+
+![image](https://github.com/user-attachments/assets/00802096-4016-432b-86df-cfbcd2cfe5f7)
+
 
 ### Key Configuration Properties
 ```yaml
@@ -195,14 +193,23 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: order-service
-          uri: lb://order-service
+        - id: orderService
+          uri: lb://ORDERSERVICE
           predicates:
-            - Path=/orders/**
+            - Path=/api/v1/orders/**
           filters:
-            - name: CircuitBreaker
-              args:
-                name: orderCircuitBreaker
+            - AddRequestHeader=X-Request-Id, Rohan
+            - StripPrefix=2
+            - name: LoggingOrdersFilter
+            - name: Authentication
+        - id: inventoryService
+          uri: lb://INVENTORYSERVICE
+          predicates:
+            - Path=/api/v1/inventory/**
+          filters:
+            - AddRequestHeader=X-Request-Id, Rohan
+            - StripPrefix=2
+            - name: Authentication
 ```
 
 ## 📊 Monitoring & Observability
@@ -232,11 +239,36 @@ spring:
 ### Gateway Filters
 ```java
 @Component
-public class AuthenticationFilter implements GlobalFilter {
+public class AuthenticationGatewayFilterFactory extends AbstractGatewayFilterFactory<AuthenticationGatewayFilterFactory.Config> {
+
+    private final JwtService jwtService;
+
+    public AuthenticationGatewayFilterFactory(JwtService jwtService) {
+        super(Config.class);
+        this.jwtService=jwtService;
+    }
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        // JWT validation logic
-        return chain.filter(exchange);
+        String authenticationHeader=exchange.getRequest().getHeaders()
+                    .getFirst("Authorization");
+            if(authenticationHeader==null) {
+                exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+                return exchange.getResponse().setComplete();
+            }
+            String token=authenticationHeader.split("Bearer ")[1];
+
+            Long userId=jwtService.getUserIdFromToken(token);
+
+            // Spring Boot 3.4.1
+            ServerHttpRequest mutatedRequest=exchange.getRequest().mutate()
+                    .header("X_User-Id",userId.toString())
+                    .build();
+
+
+            return chain.filter(exchange.mutate().request(mutatedRequest).build());
+    }
+    public static class Config {
+
     }
 }
 ```
@@ -368,31 +400,31 @@ https://github.com/user-attachments/assets/57c70b69-cd46-4622-81bb-16a96df8062f
 
 #### Order Service
 ```http
-POST /orders
+POST /orders/add
 GET /orders/{id}
-PUT /orders/{id}
-DELETE /orders/{id}
+
+    /orders/all
+PUT    /orders/update/{id}
+DELETE /orders/delete/{id}
 ```
 
 #### Inventory Service
 ```http
-GET /inventory/products
+GET /inventory/products/all
 GET /inventory/products/{id}
-PUT /inventory/products/{id}/stock
+PUT /inventory/products/updateStocks
+PUT /inventory/products/increaseStocks
 ```
 
 #### Authentication
 ```http
-POST /auth/login
-POST /auth/register
-GET /auth/validate
+http://localhost:8081/api/v1/..
 ```
 
 ### Detailed Documentation
 - 📄 **API Documentation**: Available at `/swagger-ui.html`
-- 📖 **Architecture Guide**: See `docs/architecture.md`
-- 🛠️ **Setup Guide**: See `docs/setup.md`
-- 🔧 **Configuration Guide**: See `docs/configuration.md`
+- 📖 **PDF Notes**: ....uploaded soon
+
 
 ## 🎯 Learning Outcomes
 
@@ -431,7 +463,7 @@ Give a ⭐️ if this project helped you learn microservices architecture!
 ## 📞 Support
 
 If you have any questions or need help with the project, please:
-1. Check the [Issues](https://github.com/ARONAGENT/ecommerce-microservices/issues) page
+1. Check the [Issues](https://github.com/ARONAGENT/Microservices_SpringBoot_E-Commerce/issues) page
 2. Create a new issue if your question isn't already answered
 3. Contact me via [LinkedIn](https://linkedin.com/in/rohan-uke)
 
