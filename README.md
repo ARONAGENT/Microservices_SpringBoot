@@ -3,7 +3,6 @@
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-brightgreen.svg)](https://spring.io/projects/spring-boot)
 [![Spring Cloud](https://img.shields.io/badge/Spring%20Cloud-2023.x-blue.svg)](https://spring.io/projects/spring-cloud)
 [![Java](https://img.shields.io/badge/Java-17+-orange.svg)](https://www.oracle.com/java/)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 A comprehensive **E-Commerce Microservices Platform** built using **Spring Boot** and the **Spring Cloud ecosystem**. This project demonstrates how to architect a scalable, maintainable, and distributed microservice-based system with production-ready features including service discovery, API gateway, distributed tracing, and centralized logging.
 
@@ -11,25 +10,8 @@ A comprehensive **E-Commerce Microservices Platform** built using **Spring Boot*
 
 This microservices platform follows the **distributed architecture pattern** with the following core components:
 
-```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Client Apps   │────│   API Gateway   │────│  Load Balancer  │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-                                │
-                    ┌───────────┼───────────┐
-                    │           │           │
-            ┌───────▼────┐ ┌────▼────┐ ┌───▼──────┐
-            │   Order    │ │Inventory│ │   Auth   │
-            │  Service   │ │ Service │ │ Service  │
-            └────────────┘ └─────────┘ └──────────┘
-                    │           │           │
-                    └───────────┼───────────┘
-                                │
-                    ┌───────────▼───────────┐
-                    │   Eureka Server       │
-                    │ (Service Discovery)   │
-                    └─────────────────────--┘
-```
+![image](https://github.com/user-attachments/assets/363444ac-3585-483f-bfaf-7da4b8d851d6)
+
 
 ## ✨ Features
 
@@ -277,7 +259,7 @@ public class AuthenticationGatewayFilterFactory extends AbstractGatewayFilterFac
 
 **1.Eureka Default**
 
-![1 eurekadefault](https://github.com/user-attachments/assets/e29419e8-a7d4-44da-b26b-9b07b93b2e44)
+![image](https://github.com/user-attachments/assets/d69a1e90-0c02-4a05-ba28-15c9fe8a422f)
 <br><br>
 
 **2.Both Services (Inventory & Order) Configured with Eureka**
@@ -356,6 +338,11 @@ public class AuthenticationGatewayFilterFactory extends AbstractGatewayFilterFac
 ![17 Kibana interface workin successfully](https://github.com/user-attachments/assets/4f02c48a-03d5-4b13-a999-8b88e5a921fc)
 <br><br>
 
+**17.Logstash logs Sending To Elastic Search**
+
+![image](https://github.com/user-attachments/assets/6d69d413-cd3a-4ecf-bb6b-ce5514631e88)
+<br><br>
+
 ## 🎥 Demo Videos
 
 The project includes comprehensive demo videos showcasing:
@@ -402,7 +389,6 @@ https://github.com/user-attachments/assets/57c70b69-cd46-4622-81bb-16a96df8062f
 ```http
 POST /orders/add
 GET /orders/{id}
-
     /orders/all
 PUT    /orders/update/{id}
 DELETE /orders/delete/{id}
@@ -422,7 +408,7 @@ http://localhost:8081/api/v1/..
 ```
 
 ### Detailed Documentation
-- 📄 **API Documentation**: Available at `/swagger-ui.html`
+- 📄 **API Documentation**: Add Dependency & Available at `/swagger-ui.html`
 - 📖 **PDF Notes**: ....uploaded soon
 
 
