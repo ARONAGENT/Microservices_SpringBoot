@@ -259,12 +259,12 @@ public class AuthenticationGatewayFilterFactory extends AbstractGatewayFilterFac
 
 **1.Eureka Default**
 
-![image](https://github.com/user-attachments/assets/d69a1e90-0c02-4a05-ba28-15c9fe8a422f)
+![1 eurekadefault](https://github.com/user-attachments/assets/1518b6b6-182c-4e16-8209-0291c34b0f23)
 <br><br>
 
-**2.Both Services (Inventory & Order) Configured with Eureka**
+**2.All Services Configured with Eureka**
 
-![2 both service Inventory and orderconfigure with eureka](https://github.com/user-attachments/assets/03a8309c-0201-4f72-bd96-a8702401c989)
+![image](https://github.com/user-attachments/assets/d69a1e90-0c02-4a05-ba28-15c9fe8a422f)
 <br><br>
 
 
@@ -409,7 +409,7 @@ http://localhost:8081/api/v1/..
 
 ### Detailed Documentation
 - 📄 **API Documentation**: Add Dependency & Available at `/swagger-ui.html`
-- 📖 **PDF Notes**: ....uploaded soon
+- 📖 **PDF Notes**: [Microservices_Theory](https://github.com/user-attachments/files/20646801/MicroservicesTheory.pdf)
 
 
 ## 🎯 Learning Outcomes
